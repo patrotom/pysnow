@@ -4,6 +4,7 @@
 
 tmp/*
 config/config.yml
+tmp.*
 
 ### Code ###
 .vscode/*
