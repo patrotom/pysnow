@@ -3,6 +3,7 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,linux,code
 
 tmp/*
+config/config.yml
 
 ### Code ###
 .vscode/*
