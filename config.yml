@@ -1,3 +1,5 @@
 auth_url: https://spaceknow.auth0.com/oauth/ro
 api_url: https://api.spaceknow.com
 client_id: hmWJcfhRouDOaJK2L8asREMlMrv3jFE1
+provider: gbdx
+dataset: idaho-pansharpened
