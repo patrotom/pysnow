@@ -1,2 +1,3 @@
 pyyml
 requests
+pillow

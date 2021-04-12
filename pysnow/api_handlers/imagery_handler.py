@@ -1,6 +1,9 @@
-class ImageryHandler:
+from pysnow.api_handlers.api_handler import APIHandler
+
+
+class ImageryHandler(APIHandler):
     def __init__(self, requestor, opts):
-        self.__requestor = requestor
+        super().__init__(requestor)
         self.__opts = opts
 
     def initiate(self):
@@ -13,21 +16,21 @@ class ImageryHandler:
             "onlyDownloadable": True
         }
 
-        response = self.__requestor.send(data, "/imagery/search/initiate", "POST")
+        response = self._requestor.send(data, "/imagery/search/initiate", "POST")
 
         return response["pipelineId"]
 
     def is_finished(self, pipeline_id):
         data = {"pipelineId": pipeline_id}
 
-        response = self.__requestor.send(data, "/tasking/get-status", "POST")
+        response = self._requestor.send(data, "/tasking/get-status", "POST")
 
         return response["status"] == "RESOLVED"
 
     def retrieve(self, pipeline_id):
         data = {"pipelineId": pipeline_id}
 
-        response = self.__requestor.send(data, "/imagery/search/retrieve", "POST")
+        response = self._requestor.send(data, "/imagery/search/retrieve", "POST")
 
         return response
 

@@ -3,29 +3,31 @@ import time
 import os
 
 from pysnow.utils.requestor import Requestor
-from pysnow.lib.analysis_handler import AnalysisHandler
-from pysnow.lib.imagery_handler import ImageryHandler
-
-# 1. Authorization
-# 2. Ragnar API - search scenes
-#   a. POST /imagery/search/initiate
-#   b. POST /tasking/get-status
-#   c. POST /imagery/search/retrieve
-# 3. Kraken API - retrieve data
-#   a. ...
+from pysnow.api_handlers.analysis_handler import AnalysisHandler
+from pysnow.api_handlers.imagery_handler import ImageryHandler
 
 class PySnow:
     def __init__(self, username, password):
         self.__load_config()
         self.__requestor = Requestor(self.__requestor_opts(username, password))
 
-    # Start with synchronous version, do async later
-    # Will accept only polygon with coordinates
-    # imagery_opts = {
-    #   coordinates: [[x, y]],
-    #   startDatetime: YYYY-MM-DD HH:MM:SS,
-    #   endDatetime: YYYY-MM-DD HH:MM:SS,
-    # }
+    # 1. Authorization
+    # 2. Ragnar API - search scenes
+    #   a. POST /imagery/search/initiate
+    #   b. POST /tasking/get-status
+    #   c. POST /imagery/search/retrieve
+    # 3. Kraken API - retrieve data
+    #   a. Imagery
+    #       1. Initiate Kraken
+    #       2. Retrieve Kraken
+    #       3. Download all grid files for all tiles
+    #       4. Merge pngs
+    #   b. Cars
+    #       1. Initiate Kraken
+    #       2. Retrieve Kraken
+    #       3. Download all grid files for all tiles
+    #       4. Merge pngs
+    # 4. Overlay Cars onto Imagery and save file
     def analyze_imagery(self, imagery_opts={}, analysis_opts={}):
         analysis_handler = AnalysisHandler(self.__requestor, analysis_opts)
 
