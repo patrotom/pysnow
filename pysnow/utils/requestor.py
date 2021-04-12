@@ -4,7 +4,7 @@ import requests
 class Requestor:
     def __init__(self, opts):
         self.__opts = opts
-        self.__headers = {"Content-Type": "application/json"}
+        self.__headers = {}
         self.__authenticate()
 
     # TODO: Handle expired token
@@ -13,7 +13,7 @@ class Requestor:
         url = f"{self.__opts['api_url']}{endpoint}"
 
         response = requests.request(method, url, headers=self.__headers,
-                                                 data=data).json()
+                                                 json=data).json()
 
         return response
 
@@ -27,7 +27,6 @@ class Requestor:
             "scope": "openid"
         }
 
-        response = requests.post(self.__opts['auth_url'], headers=self.__headers,
-                                                        data=data).json()
+        response = requests.post(self.__opts['auth_url'], json=data).json()
 
         self.__headers["Authorization"] = f"Bearer {response['id_token']}"

@@ -1,4 +1,6 @@
 import yaml
+import time
+import os
 
 from pysnow.utils.requestor import Requestor
 from pysnow.lib.analysis_handler import AnalysisHandler
@@ -15,9 +17,7 @@ from pysnow.lib.imagery_handler import ImageryHandler
 class PySnow:
     def __init__(self, username, password):
         self.__load_config()
-        requestor = Requestor(self.__requestor_opts(username, password))
-        self.__imagery_handler = ImageryHandler(requestor)
-        self.__analysis_handler = AnalysisHandler(requestor)
+        self.__requestor = Requestor(self.__requestor_opts(username, password))
 
     # Start with synchronous version, do async later
     # Will accept only polygon with coordinates
@@ -27,13 +27,31 @@ class PySnow:
     #   endDatetime: YYYY-MM-DD HH:MM:SS,
     # }
     def analyze_imagery(self, imagery_opts={}, analysis_opts={}):
-        pass
+        analysis_handler = AnalysisHandler(self.__requestor, analysis_opts)
 
-    def __retrieve_imagery(self):
-        pass
+        imagery = self.__retrieve_imagery(imagery_opts)
+
+
+    def __retrieve_imagery(self, imagery_opts):
+        imagery_opts["provider"] = self.__config["provider"]
+        imagery_opts["dataset"] = self.__config["dataset"]
+        imagery_handler = ImageryHandler(self.__requestor, imagery_opts)
+
+        pipeline_id = imagery_handler.initiate()
+        while True:
+            if imagery_handler.is_finished(pipeline_id):
+                break
+            time.sleep(1)
+
+        return imagery_handler.retrieve(pipeline_id)
 
     def __load_config(self):
-        with open("../config.yml", "r") as cf:
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+        path_segments = dir_path.split("/")[:-1]
+        path_segments.append("config.yml")
+        file_path = "/".join(path_segments)
+
+        with open(file_path, "r") as cf:
             self.__config = yaml.safe_load(cf)
 
     def __requestor_opts(self, username, password):
